@@ -1,5 +1,8 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
+let pass = encodeURIComponent("7567785941")
+MONGODB_CONN_STRING = `mongodb+srv://Kelvinv:${pass}@a1.zuoiy7b.mongodb.net/sample_mflix?retryWrites=true&w=majority`
+console.log(MONGODB_CONN_STRING)
 
 const movieSchema = new Schema({
     plot: String,
