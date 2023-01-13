@@ -30,7 +30,8 @@ app.post("/api/movies", (req, res) => {
     db.addNewMovie(req.body).then((movie) => {
         res.status(201).json({ NewMovieAdded: movie });
     }).catch((err) => {
-        res.status(500).json({ Error: err })
+        res.status(500).send(`Unable to add Movie ${movie}`)
+        console.log(err);
     })
 })
 
@@ -43,7 +44,8 @@ app.get("/api/movies", (req, res) => {
             res.json(movies)
         }
     }).catch((err) => {
-        res.status(500).json({ Error: err })
+        res.status(500).send(`Unable to find any Movies`)
+        console.log(err);
     })
 })
 
@@ -56,7 +58,8 @@ app.get("/api/movies/:id", (req, res) => {
             res.send({ MovieById: movie })
         }
     }).catch((err) => {
-        res.json(err)
+        res.status(500).send(`Error finding Movie with ID ${req.params.id}`)
+        console.log(err);
     })
 })
 
@@ -64,7 +67,8 @@ app.put("/api/movies/:id", (req, res) => {
     db.updateMovieById(req.body, req.params.id).then((movie) => {
         res.send({ UpdatedMovie: movie + " movie is been updated" })
     }).catch((err) => {
-        res.status(500).json({ Error: err })
+        res.status(500).send(`Unable to Update the ${movie}`)
+        console.log(err);
     })
 })
 
@@ -72,7 +76,8 @@ app.delete("/api/movies/:id", (req, res) => {
     db.deleteMovieById(req.params.id).then((movie) => {
         res.json({ Msg: movie + "Movie deleted successfully" })
     }).catch((err) => {
-        res.status(500).json({ Error: err })
+        res.status(500).send(`Unable to delete the Movie ${movie}`)
+        console.log(err);
     })
 })
 
@@ -81,5 +86,6 @@ db.initialize(process.env.MONGODB_CONN_STRING).then(() => {
         console.log(`server listening on: ${HTTP_PORT}`);
     })
 }).catch((err) => {
-    res.status(500).json({ Error: err })
+    res.status(500).send(`Error while connecting to PORT ${HTTP_PORT}`)
+        console.log(err);
 });
