@@ -4,8 +4,9 @@ const cors = require('cors')
 const app = express()
 require('dotenv').config()
 app.use(cors())
-const HTTP_PORT = process.env.PORT || 8080
+const HTTP_PORT = process.env.PORT
 
+const { rmSync } = require('fs')
 const MoviesDB = require("./modules/moviesDB.js");
 const db = new MoviesDB();
 
@@ -17,48 +18,48 @@ app.get("/", (req, res) => {
 
 app.post("/api/movies", (req, res) => {
     db.addNewMovie(req.body).then((movie) => {
-        res.send({NewMovieAdded: movie});
+        res.status(201).json({NewMovieAdded: movie});
     }).catch((err) => {
-        console.log(err);
+        res.status(500).json({Error: err})
     })
 })
 
 app.get("/api/movies", (req, res) => {
-    db.getAllMovies(req.page, req.perPage, req.title).then((movies) => {
-        res.send({Movies: movies})
+    db.getAllMovies(req.query.page, req.query.perPage, req.query.title).then((movies) => {
+        res.json(movies)
     }).catch((err) => {
-        console.log(err)
+        res.status(500).json({Error: err})
     })
 })
 
-app.get("/api/movies", (req, res) => {
-    db.getMovieById(req.params).then((movie) => {
+app.get("/api/movies/:id", (req, res) => {
+    db.getMovieById(req.params.id).then((movie) => {
         res.send({MovieById: movie})
     }).catch((err) => {
-        console.log(err);
+        res.status(500).json({Error: err})
     })
 })
 
-app.put("/api/movies", (req, res) => {
-    db.updateMovieById(req.body, req.params).then((movie) => {
+app.put("/api/movies/:id", (req, res) => {
+    db.updateMovieById(req.body, req.params.id).then((movie) => {
         res.send({UpdatedMovie: movie + " movie is been updated"})
     }).catch((err) => {
-        console.log(err);
+        res.status(500).json({Error: err})
     })
 })
 
-app.delete("/api/movies", (req, res) => {
-    db.deleteMovieById(req.params).then((movie) => {
-        res.json({Msg: "Movie deleted successfully"})
+app.delete("/api/movies/:id", (req, res) => {
+    db.deleteMovieById(req.params.id).then((movie) => {
+        res.json({Msg: movie + "Movie deleted successfully"})
     }).catch((err) => {
-        console.log(err);
+        res.status(500).json({Error: err})
     })
 })
 
-db.initialize(MONGODB_CONN_STRING).then(() => {
+db.initialize(process.env.MONGODB_CONN_STRING).then(() => {
     app.listen(HTTP_PORT, () => {
         console.log(`server listening on: ${HTTP_PORT}`);
     })
 }).catch((err) => {
-    console.log(err);
+    res.status(500).json({Error: err})
 });
