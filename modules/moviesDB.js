@@ -68,6 +68,7 @@ module.exports = class MoviesDB {
     }
 
     async addNewMovie(data) {
+        console.log(data);
         const newMovie = new this.Movie(data);
         await newMovie.save();
         return newMovie;

@@ -30,7 +30,7 @@ app.post("/api/movies", (req, res) => {
     db.addNewMovie(req.body).then((movie) => {
         res.status(201).json({ NewMovieAdded: movie });
     }).catch((err) => {
-        res.status(500).send(`Unable to add Movie ${movie}`)
+        res.status(500).send(`Unable to add Movie`)
         console.log(err);
     })
 })
